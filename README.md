@@ -65,47 +65,73 @@ Featuring glassmorphic sliding drawers powered by **Framer Motion**.
 Plantify Pro uses a decoupled, event-driven architecture to ensure the 3D UI never drops frames while processing complex AI diagnostics in the background.
 
 ```mermaid
-graph TD
-    subgraph Frontend [Spatial Client]
-        UI[Glassmorphic UI / Tailwind]
-        Canvas[3D Canvas / React Three Fiber]
-        Motion[Framer Motion Animations]
+flowchart LR
+    %% Core Style Definitions (Dark Mode aesthetic with neon accents)
+    classDef frontend fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
+    classDef backend fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
+    classDef database fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
+    classDef external fill:#1e293b,stroke:#8b5cf6,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
+    classDef ai fill:#1e293b,stroke:#ec4899,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
+    classDef subGraph fill:#0f172a,stroke:#334155,stroke-width:1px,color:#94a3b8,stroke-dasharray: 5 5;
+
+    %% -----------------------------------------
+    %% 1. CLIENT LAYER
+    %% -----------------------------------------
+    subgraph ClientLayer ["🖥️ Client Environment (Browser / Mobile)"]
+        direction TB
+        UI["🖼️ React UI (Vite + Tailwind)"]:::frontend
+        Motion["✨ Framer Motion (Transitions)"]:::frontend
+        Canvas["🧊 React Three Fiber (3D Canvas)"]:::frontend
+        
+        UI -.- Motion
     end
 
-    subgraph Backend [Node and Express API]
-        WS((WebSocket Server))
-        Agent[LangChain AI Agent]
-        DB[(SQLite3 Sync DB)]
+    %% -----------------------------------------
+    %% 2. APPLICATION LAYER
+    %% -----------------------------------------
+    subgraph AppLayer ["⚙️ Node.js Backend Engine"]
+        direction TB
+        API["🌐 Express.js REST API"]:::backend
+        WS{"⚡ WebSocket Server (ws)"}:::backend
+        
+        subgraph AIPipeline ["🧠 AI Orchestration"]
+            direction TB
+            Agent["🦜🔗 LangChain.js Agent"]:::ai
+        end
     end
 
-    subgraph External [External Services]
-        LLM[OpenAI GPT API]
+    %% -----------------------------------------
+    %% 3. DATA LAYER
+    %% -----------------------------------------
+    subgraph DataLayer ["💾 Persistence Layer"]
+        DB[("🗄️ SQLite3 Database")]:::database
     end
 
-    UI <-->|REST API| Backend
-    Canvas <-->|Live Sync ws://| WS
-    Backend <--> DB
-    Agent <-->|Prompt & Chain| LLM
-    Backend --> Agent
-```
+    %% -----------------------------------------
+    %% 4. EXTERNAL LAYER
+    %% -----------------------------------------
+    subgraph ExternalLayer ["☁️ Third-Party Services"]
+        LLM{{"🤖 OpenAI GPT-4o API"}}:::external
+    end
 
----
+    %% -----------------------------------------
+    %% CONNECTIONS & PROTOCOLS
+    %% -----------------------------------------
+    
+    %% Client to Server
+    UI <==>|"HTTPS (JSON/REST)"| API
+    Canvas <==>|"ws:// (Real-Time Bi-Di)"| WS
+    
+    %% Server to Data
+    API <==>|"SQL Read/Write"| DB
+    WS -.->|"Sync/Update"| DB
+    
+    %% Server to AI to External
+    API --->|"Invoke Prompt/Chain"| Agent
+    Agent <==>|"HTTPS (API Keys)"| LLM
 
-## 🛠 Tech Stack Details
-
-### Frontend Canvas
-
-- **Framework:** React.js (TypeScript) + Vite for lightning-fast HMR  
-- **Styling:** Tailwind CSS for atomic, responsive layouts  
-- **Animation:** Framer Motion for fluid layout transitions and glassmorphic drawer states  
-- **Spatial Rendering:** React Three Fiber (R3F) & Drei for high-fidelity 3D plant rendering  
-
-### Backend Engine
-
-- **Server:** Node.js + Express for robust JSON endpoint routing  
-- **Real-Time:** `ws` package for native, lightweight WebSocket broadcasting  
-- **Database:** SQLite3 for zero-config, fast, file-based synchronous data storage  
-- **AI Pipeline:** LangChain.js orchestration communicating with OpenAI APIs  
+    %% Apply Subgraph Styles
+    class ClientLayer,AppLayer,DataLayer,ExternalLayer,AIPipeline subGraph;  
 
 ---
 
