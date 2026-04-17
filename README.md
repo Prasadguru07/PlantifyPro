@@ -66,74 +66,55 @@ Plantify Pro uses a decoupled, event-driven architecture to ensure the 3D UI nev
 
 ```mermaid
 flowchart LR
-    %% Core Style Definitions (Dark Mode aesthetic with neon accents)
-    classDef frontend fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
-    classDef backend fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
-    classDef database fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
-    classDef external fill:#1e293b,stroke:#8b5cf6,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
-    classDef ai fill:#1e293b,stroke:#ec4899,stroke-width:2px,color:#f8fafc,rx:8,ry:8;
-    classDef subGraph fill:#0f172a,stroke:#334155,stroke-width:1px,color:#94a3b8,stroke-dasharray: 5 5;
 
-    %% -----------------------------------------
-    %% 1. CLIENT LAYER
-    %% -----------------------------------------
-    subgraph ClientLayer ["🖥️ Client Environment (Browser / Mobile)"]
+    %% Style Definitions
+    classDef frontend fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc;
+    classDef backend fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc;
+    classDef database fill:#1e293b,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+    classDef external fill:#1e293b,stroke:#8b5cf6,stroke-width:2px,color:#f8fafc;
+    classDef ai fill:#1e293b,stroke:#ec4899,stroke-width:2px,color:#f8fafc;
+
+    %% Client Layer
+    subgraph ClientLayer [Client Environment]
         direction TB
-        UI["🖼️ React UI (Vite + Tailwind)"]:::frontend
-        Motion["✨ Framer Motion (Transitions)"]:::frontend
-        Canvas["🧊 React Three Fiber (3D Canvas)"]:::frontend
-        
-        UI -.- Motion
+        UI[React UI Vite Tailwind]:::frontend
+        Motion[Framer Motion Transitions]:::frontend
+        Canvas[React Three Fiber Canvas]:::frontend
+        UI -.-> Motion
     end
 
-    %% -----------------------------------------
-    %% 2. APPLICATION LAYER
-    %% -----------------------------------------
-    subgraph AppLayer ["⚙️ Node.js Backend Engine"]
+    %% Application Layer
+    subgraph AppLayer [Node Backend Engine]
         direction TB
-        API["🌐 Express.js REST API"]:::backend
-        WS{"⚡ WebSocket Server (ws)"}:::backend
-        
-        subgraph AIPipeline ["🧠 AI Orchestration"]
+        API[Express REST API]:::backend
+        WS[WebSocket Server ws]:::backend
+
+        subgraph AIPipeline [AI Orchestration]
             direction TB
-            Agent["🦜🔗 LangChain.js Agent"]:::ai
+            Agent[LangChain JS Agent]:::ai
         end
     end
 
-    %% -----------------------------------------
-    %% 3. DATA LAYER
-    %% -----------------------------------------
-    subgraph DataLayer ["💾 Persistence Layer"]
-        DB[("🗄️ SQLite3 Database")]:::database
+    %% Data Layer
+    subgraph DataLayer [Persistence Layer]
+        DB[(SQLite3 Database)]:::database
     end
 
-    %% -----------------------------------------
-    %% 4. EXTERNAL LAYER
-    %% -----------------------------------------
-    subgraph ExternalLayer ["☁️ Third-Party Services"]
-        LLM{{"🤖 OpenAI GPT-4o API"}}:::external
+    %% External Services
+    subgraph ExternalLayer [Third Party Services]
+        LLM[OpenAI GPT API]:::external
     end
 
-    %% -----------------------------------------
-    %% CONNECTIONS & PROTOCOLS
-    %% -----------------------------------------
-    
-    %% Client to Server
-    UI <==>|"HTTPS (JSON/REST)"| API
-    Canvas <==>|"ws:// (Real-Time Bi-Di)"| WS
-    
-    %% Server to Data
-    API <==>|"SQL Read/Write"| DB
-    WS -.->|"Sync/Update"| DB
-    
-    %% Server to AI to External
-    API --->|"Invoke Prompt/Chain"| Agent
-    Agent <==>|"HTTPS (API Keys)"| LLM
+    %% Connections
+    UI <--> |HTTPS REST JSON| API
+    Canvas <--> |WebSocket RealTime| WS
 
-    %% Apply Subgraph Styles
-    class ClientLayer,AppLayer,DataLayer,ExternalLayer,AIPipeline subGraph;  
+    API <--> |SQL Read Write| DB
+    WS --> |Sync Update| DB
 
----
+    API --> |Invoke Chain| Agent
+    Agent <--> |HTTPS API| LLM
+```
 
 ## 🚀 Getting Started
 
